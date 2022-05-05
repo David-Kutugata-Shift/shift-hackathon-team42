@@ -33,15 +33,20 @@ def get_conversation_id(conversation_name):
     except:
         print(f"Error")
 
+def get_text_from_json(results):
+    return [msg['text'] for msg in results]
+
+
 def get_messages_history(conversation_id):
     try:
         # Call the conversations.history method using the WebClient
         # conversations.history returns the first 100 messages by default
         # These results are paginated, see: https://api.slack.com/methods/conversations.history$pagination
         result = client.conversations_history(channel=conversation_id)
-        return result["messages"]
+        return get_text_from_json(result["messages"])
     except:
         print("Error creating conversation")
+
 
 def tfidf(msgs, vectorizer=None):
     if vectorizer is None:
@@ -87,5 +92,4 @@ def message(payload):
 
 if __name__ == "__main__":
     db_rep, msgs, vectorizer = init_db()
-
     app.run(debug=True)
