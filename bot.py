@@ -50,19 +50,19 @@ def get_messages_history(conversation_id):
 
 def tfidf(msgs, vectorizer=None):
     if vectorizer is None:
-        vectorizer = TfidfVectorizer(min_df=10)
+        vectorizer = TfidfVectorizer()
     db_rep = vectorizer.fit_transform(msgs)
     return db_rep, vectorizer
 
 def retrieve_similars_idxs(question_rep, db_rep, n=5):
     best_matches = cosine_similarity(question_rep, db_rep)
     best_matches_idx = np.argsort(best_matches)
-    return best_matches_idx[1, n+1]
+    return best_matches_idx[0, n]
 
 def get_similar_msgs(question, msgs, db_rep, vectorizer):
     if not isinstance(question, list):
         question = [question]
-    question_rep, _ = vectorizer.fit_transform(question)
+    question_rep = vectorizer.transform(question)
     idxs = retrieve_similars_idxs(question_rep, db_rep)
     return msgs[idxs]
 
@@ -90,7 +90,8 @@ def message(payload):
             print('Received a question. Querying db:')
             sim_msgs = get_similar_msgs(text, msgs, db_rep, vectorizer)
             for msg in sim_msgs:
-                client.chat_postMessage(channel='#qwerty-channel', text=msg)
+                # client.chat_postMessage(channel=channel_id, text=msg)
+                print(msg)
 
 if __name__ == "__main__":
     db_rep, msgs, vectorizer = init_db()
