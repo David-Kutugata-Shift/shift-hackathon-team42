@@ -1,4 +1,7 @@
-slack
+slack_sdk
 flask
 aiohttp
 slackeventsapi
+python-dotenv
+sklearn
+numpy
