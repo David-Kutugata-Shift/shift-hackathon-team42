@@ -60,6 +60,8 @@ def retrieve_similars_idxs(question_rep, db_rep, n=5):
     return best_matches_idx[1, n+1]
 
 def get_similar_msgs(question, msgs, db_rep, vectorizer):
+    if not isinstance(question, list):
+        question = [question]
     question_rep, _ = vectorizer.fit_transform(question)
     idxs = retrieve_similars_idxs(question_rep, db_rep)
     return msgs[idxs]
