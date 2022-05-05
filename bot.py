@@ -57,7 +57,7 @@ def tfidf(msgs, vectorizer=None):
 def retrieve_similars_idxs(question_rep, db_rep, n=5):
     best_matches = cosine_similarity(question_rep, db_rep)
     best_matches_idx = np.argsort(best_matches)
-    return best_matches_idx[0, :n]
+    return best_matches_idx[0, -n:]
 
 def get_similar_msgs(question, msgs, db_rep, vectorizer):
     if not isinstance(question, list):
