@@ -11,7 +11,7 @@ load_dotenv(dotenv_path=env_path)
 app = Flask(__name__)
 slack_event_adapter = SlackEventAdapter(os.environ['SIGNING_SECRET'], '/slack/events', app)
 
-client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
+client = slack.WebClient(token=os.environ['SLACK_TOKEN2'])
 BOT_ID = client.api_call("auth.test")['user_id']
 
 def get_conversation_id(conversation_name):
@@ -25,8 +25,8 @@ def get_conversation_id(conversation_name):
                 if channel["name"] == conversation_name:
                     conversation_id = channel["id"]
                     return conversation_id
-    except SlackApiError as e:
-        print(f"Error: {e}")
+    except:
+        print(f"Error")
 
 def get_messages_history(conversation_id):
     try:
@@ -35,13 +35,14 @@ def get_messages_history(conversation_id):
         # These results are paginated, see: https://api.slack.com/methods/conversations.history$pagination
         result = client.conversations_history(channel=conversation_id)
         return result["messages"]
-    except SlackApiError as e:
-        print("Error creating conversation: {}".format(e))
+    except:
+        print("Error creating conversation")
 
 def init_db():
-    conv_id = get_conversation_id('#hackathon')
+    conv_id = get_conversation_id('qwerty-channel')
     msgs = get_messages_history(conv_id)
     print(len(msgs), conv_id)
+    # print('id: ' + str(conv_id))
     return msgs
 
 def is_question(text):
@@ -57,9 +58,10 @@ def message(payload):
     text = event.get('text')
 
     if user_id != BOT_ID:
-        client.chat_postMessage(channel='#hackathon', text='hi ' + user_id + ', great question')
+        client.chat_postMessage(channel='#qwerty-channel', text='hi ' + user_id + ', great question')
 
 
 if __name__ == "__main__":
     db = init_db()
+    print(db)
     app.run(debug=True)
