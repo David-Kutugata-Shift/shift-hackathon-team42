@@ -57,17 +57,18 @@ def tfidf(msgs, vectorizer=None):
 def retrieve_similars_idxs(question_rep, db_rep, n=5):
     best_matches = cosine_similarity(question_rep, db_rep)
     best_matches_idx = np.argsort(best_matches)
-    return best_matches_idx[0, n]
+    return best_matches_idx[0, :n]
 
 def get_similar_msgs(question, msgs, db_rep, vectorizer):
     if not isinstance(question, list):
         question = [question]
     question_rep = vectorizer.transform(question)
     idxs = retrieve_similars_idxs(question_rep, db_rep)
-    return msgs[idxs]
+    # int_idxs = [int(idx) for idx in idxs]
+    return [msgs[int(idx)] for idx in idxs]
 
 def init_db():
-    conv_id = get_conversation_id('general')
+    conv_id = get_conversation_id('qwerty-channel')
     msgs = get_messages_history(conv_id)
     print(len(msgs), conv_id)
     db_rep, vectorizer = tfidf(msgs)
@@ -86,12 +87,12 @@ def message(payload):
     text = event.get('text')
 
     if user_id != BOT_ID:
-        if is_question(text):
-            print('Received a question. Querying db:')
-            sim_msgs = get_similar_msgs(text, msgs, db_rep, vectorizer)
-            for msg in sim_msgs:
-                # client.chat_postMessage(channel=channel_id, text=msg)
-                print(msg)
+        # if is_question(text):
+        print(f'Received text:{text}')
+        sim_msgs = get_similar_msgs(text, msgs, db_rep, vectorizer)
+        for msg in sim_msgs:
+            client.chat_postMessage(channel=channel_id, text=msg)
+            # print(msg)
 
 if __name__ == "__main__":
     db_rep, msgs, vectorizer = init_db()
