@@ -1,0 +1,4 @@
+slack
+flask
+aiohttp
+slackeventsapi
