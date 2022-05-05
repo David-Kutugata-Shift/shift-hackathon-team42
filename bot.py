@@ -60,7 +60,7 @@ def get_similar_msgs(question, msgs, db_rep, vectorizer):
     return msgs[idxs]
 
 def init_db():
-    conv_id = get_conversation_id('#hackathon')
+    conv_id = get_conversation_id('general')
     msgs = get_messages_history(conv_id)
     print(len(msgs), conv_id)
     db_rep, vectorizer = tfidf(msgs)
@@ -83,7 +83,7 @@ def message(payload):
             print('Received a question. Querying db:')
             sim_msgs = get_similar_msgs(text, msgs, db_rep, vectorizer)
             for msg in sim_msgs:
-                client.chat_postMessage(channel='#hackathon', text=msg)
+                client.chat_postMessage(channel='#qwerty-channel', text=msg)
 
 if __name__ == "__main__":
     db_rep, msgs, vectorizer = init_db()
